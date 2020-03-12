@@ -114,9 +114,9 @@ class BandDesignIntf : public ItemsContainerDesignInft
     Q_PROPERTY(BGMode backgroundMode READ backgroundMode WRITE setBackgroundModeProperty)
     Q_PROPERTY(int backgroundOpacity READ opacity WRITE setBackgroundOpacity)
     Q_PROPERTY(int shiftItems READ shiftItems WRITE setShiftItems)
-    Q_ENUMS(BandColumnsLayoutType)
     friend class BandMarker;
     friend class BandNameLabel;
+    friend class ReportRender;
 public:
 
     enum BandsType {
@@ -138,6 +138,11 @@ public:
     enum BandColumnsLayoutType{
         Horizontal, Vertical, VerticalUniform
     };
+#if (QT_VERSION >= QT_VERSION_CHECK(5,5, 0))
+    Q_ENUM(BandColumnsLayoutType)
+#else
+    Q_ENUMS(BandColumnsLayoutType)
+#endif
 
     BandDesignIntf(BandsType bandType, const QString& xmlTypeName, QObject* owner = 0, QGraphicsItem* parent=0);
     ~BandDesignIntf();
@@ -263,7 +268,8 @@ public:
     void setBootomSpace(int bootomSpace);
     void updateBandMarkerGeometry();
     int shiftItems() const;
-    void setShiftItems(int shiftItems);
+    void setShiftItems(int shiftItems);    
+    bool isNeedUpdateSize(RenderPass) const;
 
 signals:
     void bandRendered(BandDesignIntf* band);

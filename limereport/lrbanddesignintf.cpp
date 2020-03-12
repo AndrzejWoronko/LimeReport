@@ -241,6 +241,13 @@ void BandDesignIntf::setBackgroundOpacity(int value)
     }
 }
 
+bool BandDesignIntf::isNeedUpdateSize(RenderPass pass) const{
+    foreach(BaseDesignIntf* item, childBaseItems()){
+        if (item->isNeedUpdateSize(pass)) return true;
+    }
+    return false;
+}
+
 void BandDesignIntf::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     prepareRect(painter, option, widget);
@@ -717,15 +724,8 @@ BaseDesignIntf *BandDesignIntf::cloneBottomPart(int height, QObject *owner, QGra
                         moveItemsDown(item->pos().y()+item->height(), sizeOffset + bottomOffset);
                     }
                 } else {
-                    if ((item->geometry().bottom()-height)>=height){
-                        BaseDesignIntf* tmpItem = item->cloneItem(item->itemMode(),bottomPart,bottomPart);
-                        tmpItem->setPos(tmpItem->pos().x(),borderLineSize());
-                        tmpItem->setHeight((this->height()-height));
-                    } else {
-                        BaseDesignIntf* tmpItem = item->cloneEmpty((this->height()-height),bottomPart,bottomPart);
-                        if (tmpItem)
-                            tmpItem->setPos(tmpItem->pos().x(),borderLineSize());
-                    }
+                    BaseDesignIntf* tmpItem = item->cloneItem(item->itemMode(),bottomPart,bottomPart);
+                    tmpItem->setPos(tmpItem->pos().x(),borderLineSize());
                 }
             }
         }
@@ -1123,14 +1123,14 @@ void BandDesignIntf::updateItemSize(DataSourceManager* dataManager, RenderPass p
     if (keepBottomSpace()) spaceBorder = bottomSpace();
     spaceBorder = spaceBorder > 0 ? spaceBorder : 0;
     if (borderLines() != 0){
-        spaceBorder += borderLineSize();
+        spaceBorder += borderLineSize() + 2;
     }
 
     spaceBorder += m_bottomSpace;
     restoreLinks();
     snapshotItemsLayout();
     BandDesignIntf* patternBand = dynamic_cast<BandDesignIntf*>(patternItem());
-    if (patternBand && pass == FirstPass) emit(patternBand->preparedForRender());
+
     arrangeSubItems(pass, dataManager); 
     if (autoHeight()){
         if (!keepTopSpace()) {

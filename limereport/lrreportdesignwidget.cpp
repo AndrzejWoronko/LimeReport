@@ -722,15 +722,20 @@ void ReportDesignWidget::initThemeIfExist(const QString &themeName, const QStrin
 
 void ReportDesignWidget::previewReport()
 {
+    if (report()->isBusy()) return;
     prepareReport();
 #ifdef HAVE_QTDESIGNER_INTEGRATION
     updateDialogs();
 #endif
+    bool showProgressDialog = report()->isShowProgressDialog();
+    report()->setShowProgressDialog(false);
     report()->previewReport();
+    report()->setShowProgressDialog(showProgressDialog);
 }
 
 void ReportDesignWidget::printReport()
 {
+    if (report()->isBusy()) return;
     prepareReport();
 #ifdef HAVE_QTDESIGNER_INTEGRATION
     updateDialogs();

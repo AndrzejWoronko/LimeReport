@@ -190,8 +190,10 @@ ModelToDataSource::ModelToDataSource(QAbstractItemModel* model, bool owned)
 {
     Q_ASSERT(model);
     if (model){
-        while (model->canFetchMore(QModelIndex()))
+        while (model->canFetchMore(QModelIndex())){
             model->fetchMore(QModelIndex());
+            if (model->rowCount() <= 0) break;
+        }
         connect(model, SIGNAL(destroyed()), this, SLOT(slotModelDestroed()));
         connect(model, SIGNAL(modelReset()), this, SIGNAL(modelStateChanged()));
     }
@@ -719,24 +721,35 @@ QVariant CallbackDatasource::dataByKeyField(const QString& columnName, const QSt
 {
     int backupCurrentRow = m_currentRow;
     QVariant result = QVariant();
-    first();
-    if (!checkIfEmpty()){
-        int currentRow = 0;
-        do {
-            QVariant key = callbackData(keyColumnName, currentRow);
+
+    m_currentRow = m_lastKeyRow;
+    if (next()){
+        for (int i = 0; i < 10; ++i){
+            QVariant key = callbackData(keyColumnName, m_currentRow);
             if (key == keyData){
-                result = callbackData(columnName, currentRow);
-                break;
+                result = callbackData(columnName, m_currentRow);
+                m_lastKeyRow = m_currentRow;
+                m_currentRow = backupCurrentRow;
+                return result;
             }
-            currentRow++;
-        } while (next());
+            if (!next()) break;
+        }
     }
 
     first();
-    if (backupCurrentRow != -1){
-        for (int i = 0; i < backupCurrentRow; ++i)
-            next();
+    if (!checkIfEmpty()){
+        do {
+            QVariant key = callbackData(keyColumnName, m_currentRow);
+            if (key == keyData){
+                result = callbackData(columnName, m_currentRow);
+                m_lastKeyRow = m_currentRow;
+                m_currentRow = backupCurrentRow;
+                return result;
+            }
+        } while (next());
     }
+
+    m_currentRow = backupCurrentRow;
     return result;
 }
 
