@@ -56,6 +56,29 @@
     </message>
 </context>
 <context>
+    <name>ImageItemEditor</name>
+    <message>
+        <source>Image Item Editor</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Image</source>
+        <translation type="unfinished">图像</translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation type="unfinished">...</translation>
+    </message>
+    <message>
+        <source>Resource path</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Select image file</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>LRVariableDialog</name>
     <message>
         <source>Variable</source>
@@ -398,6 +421,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Print if empty</source>
         <translation>为空时打印</translation>
+    </message>
+    <message>
+        <source>Keep top space</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1137,6 +1164,10 @@ p, li { white-space: pre-wrap; }
         <source>Ext.</source>
         <translation>扩展名.</translation>
     </message>
+    <message>
+        <source>Edit</source>
+        <translation type="unfinished">编辑</translation>
+    </message>
 </context>
 <context>
     <name>LimeReport::ItemLocationPropItem</name>
@@ -1341,10 +1372,6 @@ p, li { white-space: pre-wrap; }
         <translation>报表</translation>
     </message>
     <message>
-        <source>toolBar</source>
-        <translation>工具栏</translation>
-    </message>
-    <message>
         <source>Print</source>
         <translation>打印</translation>
     </message>
@@ -1441,10 +1468,6 @@ p, li { white-space: pre-wrap; }
         <translation> / %1</translation>
     </message>
     <message>
-        <source>toolBar_2</source>
-        <translation>工具条</translation>
-    </message>
-    <message>
         <source>InsertTextItem</source>
         <translation>插入文本组件</translation>
     </message>
@@ -1463,6 +1486,14 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>Del</source>
         <translation>删除</translation>
+    </message>
+    <message>
+        <source>MainToolBar</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>EditModeTools</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
