@@ -492,6 +492,7 @@ bool ReportEnginePrivate::exportReport(QString exporterName, const QString &file
 
 bool ReportEnginePrivate::showPreviewWindow(ReportPages pages, PreviewHints hints, QPrinter* printer)
 {
+    Q_UNUSED(printer)
     if (pages.count()>0){
         Q_Q(ReportEngine);
         PreviewReportWindow* w = new PreviewReportWindow(q, 0, settings());
@@ -1796,9 +1797,6 @@ bool PrintProcessor::printPage(PageItemDesignIntf::Ptr page)
     if (!m_firstPage && !m_painter->isActive()) return false;
     PageDesignIntf* backupPage = dynamic_cast<PageDesignIntf*>(page->scene());
 
-    //LimeReport::PageDesignIntf m_renderPage;
-    //m_renderPage.setItemMode(PrintMode);
-
     QPointF backupPagePos = page->pos();
     page->setPos(0,0);
     m_renderPage.setPageItem(page);
@@ -1845,7 +1843,14 @@ bool PrintProcessor::printPage(PageItemDesignIntf::Ptr page)
         }
 
     } else {
-       m_renderPage.render(m_painter);
+        if (page->getSetPageSizeToPrinter()){
+            QRectF source = page->geometry();
+            QSizeF inchSize = source.size() / (100 * 2.54);
+            QRectF target = QRectF(QPoint(0,0), inchSize  * m_printer->resolution());
+            m_renderPage.render(m_painter, target, source);
+        } else {
+            m_renderPage.render(m_painter);
+        }
     }
     page->setPos(backupPagePos);
     m_renderPage.removePageItem(page);
@@ -1868,13 +1873,15 @@ void PrintProcessor::initPrinter(PageItemDesignIntf* page)
         m_printer->setPaperSize(pageSize,QPrinter::Millimeter);
     } else {
         m_printer->setFullPage(page->fullPage());
+        if (page->dropPrinterMargins())
+            m_printer->setPageMargins(0, 0, 0, 0, QPrinter::Point);
         m_printer->setOrientation(static_cast<QPrinter::Orientation>(page->pageOrientation()));
         if (page->pageSize()==PageItemDesignIntf::Custom){
             QSizeF pageSize = (page->pageOrientation()==PageItemDesignIntf::Landscape)?
                         QSizeF(page->sizeMM().height(),page->sizeMM().width()):
                         page->sizeMM();
             if (page->getSetPageSizeToPrinter() || m_printer->outputFormat() == QPrinter::PdfFormat)
-              m_printer->setPaperSize(pageSize,QPrinter::Millimeter);
+              m_printer->setPaperSize(pageSize, QPrinter::Millimeter);
         } else {
             if (page->getSetPageSizeToPrinter() || m_printer->outputFormat() == QPrinter::PdfFormat)
               m_printer->setPaperSize(static_cast<QPrinter::PageSize>(page->pageSize()));
@@ -2054,6 +2061,7 @@ qreal WatermarkHelper::valueToPixels(qreal value)
     case LimeReport::ItemGeometry::Pixels:
         return value;
     }
+    return -1;
 }
 
 

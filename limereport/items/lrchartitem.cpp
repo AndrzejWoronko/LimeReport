@@ -129,7 +129,8 @@ void SeriesItem::setPreferredType(const SeriesItemPreferredType& type)
 ChartItem::ChartItem(QObject *owner, QGraphicsItem *parent)
     : ItemDesignIntf(xmlTag, owner, parent), m_legendBorder(true),
       m_legendAlign(LegendAlignCenter), m_titleAlign(TitleAlignCenter),
-      m_chartType(Pie), m_labelsField("")
+      m_chartType(Pie), m_labelsField(""), m_isEmpty(true),
+      m_showLegend(true)
 {
     m_labels<<"First"<<"Second"<<"Thrid";
     m_chart = new PieChart(this);
@@ -176,12 +177,15 @@ void ChartItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                         (maxTitleHeight)):0;
 
     QRectF titleRect = QRectF(borderMargin,borderMargin,rect().width()-borderMargin*2,titleOffset);
-    QRectF legendRect = m_chart->calcChartLegendRect(painter->font(), rect(), false, borderMargin, titleOffset);
+    QRectF legendRect = QRectF(0,0,0,0);
+    if (m_showLegend)
+        legendRect = m_chart->calcChartLegendRect(painter->font(), rect(), false, borderMargin, titleOffset);
     QRectF diagramRect = rect().adjusted(borderMargin,titleOffset+borderMargin,
                                          -(legendRect.width()+borderMargin*2),-borderMargin);
 
     paintChartTitle(painter, titleRect);
-    m_chart->paintChartLegend(painter,legendRect);
+    if (m_showLegend)
+        m_chart->paintChartLegend(painter,legendRect);
     m_chart->paintChart(painter,diagramRect);
 
     painter->restore();
@@ -224,11 +228,15 @@ QObject *ChartItem::elementAt(const QString &collectionName, int index)
 
 void ChartItem::updateItemSize(DataSourceManager *dataManager, RenderPass , int )
 {
+
+    m_isEmpty = false;
     if (dataManager && dataManager->dataSource(m_datasource)){
         IDataSource* ds =  dataManager->dataSource(m_datasource);
         foreach (SeriesItem* series, m_series) {
-            series->setLabelsColumn(m_labelsField);
-            series->fillSeriesData(ds);
+            if (series->isEmpty()){
+                series->setLabelsColumn(m_labelsField);
+                series->fillSeriesData(ds);
+            }
         }
         fillLabels(ds);
     }
@@ -258,7 +266,22 @@ QWidget *ChartItem::defaultEditor()
 
 bool ChartItem::isNeedUpdateSize(RenderPass pass) const
 {
-    return  pass == FirstPass;
+    return  pass == FirstPass && m_isEmpty;
+}
+
+bool ChartItem::showLegend() const
+{
+    return m_showLegend;
+}
+
+void ChartItem::setShowLegend(bool showLegend)
+{
+    if (m_showLegend != showLegend){
+        m_showLegend = showLegend;
+        notify("showLegend", !m_showLegend, m_showLegend);
+        update();
+    }
+    m_showLegend = showLegend;
 }
 
 QList<QString> ChartItem::labels() const
@@ -561,7 +584,10 @@ QSizeF AbstractSeriesChart::calcChartLegendSize(const QFont &font)
     return  QSizeF(maxWidth+fm.height()*2,cw);
 }
 
-bool AbstractSeriesChart::verticalLabels(QPainter* painter, QRectF labelsRect){
+bool AbstractSeriesChart::verticalLabels(QPainter* painter, QRectF labelsRect)
+{
+    if (valuesCount() == 0) return false;
+
     qreal hStep = (labelsRect.width() / valuesCount());
     QFontMetrics fm = painter->fontMetrics();
     foreach(QString label, m_chartItem->labels()){
@@ -574,6 +600,8 @@ bool AbstractSeriesChart::verticalLabels(QPainter* painter, QRectF labelsRect){
 
 void AbstractSeriesChart::paintHorizontalLabels(QPainter *painter, QRectF labelsRect)
 {
+    if (valuesCount() == 0) return;
+
     painter->save();
     qreal hStep = (labelsRect.width() / valuesCount());
     if (!m_chartItem->labels().isEmpty()){
@@ -600,6 +628,8 @@ void AbstractSeriesChart::paintHorizontalLabels(QPainter *painter, QRectF labels
 
 void AbstractSeriesChart::paintVerticalLabels(QPainter *painter, QRectF labelsRect)
 {
+    if (valuesCount() == 0) return;
+
     painter->save();
     painter->setFont(adaptLabelsFont(labelsRect.adjusted(0, 0, -hPadding(m_chartItem->rect()), 0),
                                      painter->font()));
@@ -748,7 +778,7 @@ void AbstractBarChart::paintChartLegend(QPainter *painter, QRectF legendRect)
             );
             cw += painter->fontMetrics().height();
         }
-    } else {
+    } else if (m_chartItem->itemMode() == DesignMode){
         qreal cw = 0;
         for (int i=0;i<m_designLabels.size();++i){
             QString label = m_designLabels.at(i);

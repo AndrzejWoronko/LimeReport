@@ -50,8 +50,9 @@ PageItemDesignIntf::PageItemDesignIntf(QObject *owner, QGraphicsItem *parent) :
     m_topMargin(0), m_bottomMargin(0), m_leftMargin(0), m_rightMargin(0),
     m_pageOrientaion(Portrait), m_pageSize(A4), m_sizeChainging(false),
     m_fullPage(false), m_oldPrintMode(false), m_resetPageNumber(false),
-    m_isExtendedInDesignMode(false), m_extendedHeight(1000), m_isTOC(false), m_setPageSizeToPrinter(false),
-    m_endlessHeight(false), m_printable(true), m_pageFooter(0), m_printBehavior(Split)
+    m_isExtendedInDesignMode(false), m_extendedHeight(1000), m_isTOC(false),
+    m_setPageSizeToPrinter(false), m_endlessHeight(false), m_printable(true),
+    m_pageFooter(0), m_printBehavior(Split), m_dropPrinterMargins(false)
 {
     setFixedPos(true);
     setPossibleResizeDirectionFlags(Fixed);
@@ -64,8 +65,9 @@ PageItemDesignIntf::PageItemDesignIntf(const PageSize pageSize, const QRectF &re
     m_topMargin(0), m_bottomMargin(0), m_leftMargin(0), m_rightMargin(0),
     m_pageOrientaion(Portrait), m_pageSize(pageSize), m_sizeChainging(false),
     m_fullPage(false), m_oldPrintMode(false), m_resetPageNumber(false),
-    m_isExtendedInDesignMode(false), m_extendedHeight(1000), m_isTOC(false), m_setPageSizeToPrinter(false),
-    m_endlessHeight(false), m_printable(true), m_pageFooter(0), m_printBehavior(Split)
+    m_isExtendedInDesignMode(false), m_extendedHeight(1000), m_isTOC(false),
+    m_setPageSizeToPrinter(false), m_endlessHeight(false), m_printable(true),
+    m_pageFooter(0), m_printBehavior(Split), m_dropPrinterMargins(false)
 {
     setFixedPos(true);
     setPossibleResizeDirectionFlags(Fixed);
@@ -181,7 +183,8 @@ BandDesignIntf *PageItemDesignIntf::bandByType(BandDesignIntf::BandsType bandTyp
     QList<BandDesignIntf*>::const_iterator it = childBands().constBegin();
     for(;it!=childBands().constEnd();++it){
         if ( (*it)->bandType()==bandType) return (*it);
-    }    return 0;
+    }
+    return 0;
 }
 
 bool PageItemDesignIntf::isBandExists(BandDesignIntf::BandsType bandType)
@@ -342,6 +345,16 @@ void PageItemDesignIntf::initColumnsPos(QVector<qreal> &posByColumns, qreal pos,
     for(int i=0;i<columnCount;++i){
         posByColumns.append(pos);
     }
+}
+
+bool PageItemDesignIntf::dropPrinterMargins() const
+{
+    return m_dropPrinterMargins;
+}
+
+void PageItemDesignIntf::setDropPrinterMargins(bool dropPrinterMargins)
+{
+    m_dropPrinterMargins = dropPrinterMargins;
 }
 
 void PageItemDesignIntf::setPrintBehavior(const PrintBehavior &printBehavior)
@@ -875,8 +888,8 @@ void PageItemDesignIntf::moveBandFromTo(int from, int to)
 
 void PageItemDesignIntf::bandPositionChanged(QObject* object, QPointF newPos, QPointF oldPos)
 {
-    if (itemMode() == DesignMode){
-        BandDesignIntf* band = dynamic_cast<BandDesignIntf*>(object);
+    BandDesignIntf* band = dynamic_cast<BandDesignIntf*>(object);
+    if (band && !band->isChangingPos() && (itemMode() == DesignMode)){
         int curIndex = band->bandIndex();
         BandDesignIntf* bandToSwap = 0;
         foreach(BandDesignIntf* curBand, bands()){
@@ -905,7 +918,8 @@ void PageItemDesignIntf::bandPositionChanged(QObject* object, QPointF newPos, QP
                 page()->saveCommand(BandMoveFromToCommand::create(page(), band->bandIndex(), bandToSwap->bandIndex()), true);
         }
     }
-    relocateBands();
+    if (band && !band->isChangingPos())
+        relocateBands();
 }
 
 void PageItemDesignIntf::bandGeometryChanged(QObject* object, QRectF newGeometry, QRectF oldGeometry)

@@ -164,6 +164,8 @@ void QObjectPropertyModel::translatePropertyName()
     tr("geometryLocked");
     tr("printBehavior");
     tr("shiftItems");
+    tr("showLegend");
+    tr("removeGap");
 }
 
 void QObjectPropertyModel::clearObjectsList()
