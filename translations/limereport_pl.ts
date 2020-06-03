@@ -83,13 +83,13 @@
         <location filename="../limereport/items/lrimageitemeditor.ui" line="20"/>
         <location filename="../limereport/linux64/release/ui/ui_lrimageitemeditor.h" line="157"/>
         <source>Image Item Editor</source>
-        <translation type="unfinished"></translation>
+        <translation>Edytor obrazów</translation>
     </message>
     <message>
         <location filename="../limereport/items/lrimageitemeditor.ui" line="36"/>
         <location filename="../limereport/linux64/release/ui/ui_lrimageitemeditor.h" line="158"/>
         <source>Image</source>
-        <translation type="unfinished">Obraz</translation>
+        <translation>Obraz</translation>
     </message>
     <message>
         <location filename="../limereport/items/lrimageitemeditor.ui" line="44"/>
@@ -101,19 +101,19 @@
         <location filename="../limereport/linux64/release/ui/ui_lrimageitemeditor.h" line="163"/>
         <location filename="../limereport/linux64/release/ui/ui_lrimageitemeditor.h" line="164"/>
         <source>...</source>
-        <translation type="unfinished">...</translation>
+        <translation>...</translation>
     </message>
     <message>
         <location filename="../limereport/items/lrimageitemeditor.ui" line="111"/>
         <location filename="../limereport/linux64/release/ui/ui_lrimageitemeditor.h" line="162"/>
         <source>Resource path</source>
-        <translation type="unfinished"></translation>
+        <translation>Ścieżka zasobów</translation>
     </message>
     <message>
         <location filename="../limereport/items/lrimageitemeditor.cpp" line="35"/>
         <location filename="../limereport/items/lrimageitemeditor.cpp" line="60"/>
         <source>Select image file</source>
-        <translation type="unfinished"></translation>
+        <translation>Wybierz plik obrazu</translation>
     </message>
 </context>
 <context>
@@ -521,7 +521,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../limereport/lrbanddesignintf.cpp" line="615"/>
         <location filename="../limereport/lrbanddesignintf.cpp" line="622"/>
         <source>Keep top space</source>
-        <translation type="unfinished"></translation>
+        <translation>Zachowaj górny obszar</translation>
     </message>
     <message>
         <location filename="../limereport/lrbanddesignintf.cpp" line="595"/>
@@ -1511,7 +1511,7 @@ p, li { white-space: pre-wrap; }
         <location filename="../limereport/items/lrimageitem.cpp" line="87"/>
         <location filename="../limereport/items/lrimageitem.cpp" line="103"/>
         <source>Edit</source>
-        <translation type="unfinished">Edycja</translation>
+        <translation>Edycja</translation>
     </message>
     <message>
         <location filename="../limereport/items/lrimageitem.cpp" line="92"/>
