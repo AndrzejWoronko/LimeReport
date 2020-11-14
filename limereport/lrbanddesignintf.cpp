@@ -249,6 +249,12 @@ bool BandDesignIntf::isNeedUpdateSize(RenderPass pass) const{
     return false;
 }
 
+void BandDesignIntf::copyBandAttributes(BandDesignIntf *source)
+{
+    this->copyBookmarks(source);
+    this->setBackgroundColor(source->backgroundColor());
+}
+
 void BandDesignIntf::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     prepareRect(painter, option, widget);
@@ -750,6 +756,11 @@ void BandDesignIntf::objectLoadFinished()
 void BandDesignIntf::emitBandRendered(BandDesignIntf* band)
 {
     emit bandRendered(band);
+}
+
+void BandDesignIntf::emitBandReRendered(BandDesignIntf *oldBand, BandDesignIntf *newBand)
+{
+    emit bandReRendered(oldBand, newBand);
 }
 
 void BandDesignIntf::setSplittable(bool value){

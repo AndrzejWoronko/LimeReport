@@ -675,8 +675,6 @@ CSVDesc *DataSourceManager::csvByName(const QString &datasourceName)
 
 void DataSourceManager::removeDatasource(const QString &name)
 {
-    invalidateLinkedDatasources(name);
-
     if (m_datasources.contains(name)){
         IDataSourceHolder *holder;
         holder=m_datasources.value(name);
@@ -703,6 +701,7 @@ void DataSourceManager::removeDatasource(const QString &name)
         delete m_csvs.at(csvIndex);
         m_csvs.removeAt(csvIndex);
     }
+    invalidateLinkedDatasources(name);
     m_hasChanges = true;
     emit datasourcesChanged();
 }
@@ -1011,14 +1010,15 @@ void DataSourceManager::disconnectConnection(const QString& connectionName)
     foreach(QString datasourceName, dataSourceNames()){
         if (isQuery(datasourceName) || isSubQuery(datasourceName)){
             QueryHolder* qh = dynamic_cast<QueryHolder*>(dataSourceHolder(datasourceName));
-            if (qh && qh->connectionName().compare(connectionName,Qt::CaseInsensitive)==0){
-                qh->invalidate(designTime()?IDataSource::DESIGN_MODE:IDataSource::RENDER_MODE);
+            if (qh && qh->connectionName().compare(connectionName, Qt::CaseInsensitive) == 0){
+                qh->invalidate(designTime() ? IDataSource::DESIGN_MODE : IDataSource::RENDER_MODE, true);
                 qh->setLastError(tr("invalid connection"));
             }
         }
     }
 
     ConnectionDesc* connectionDesc = connectionByName(connectionName);
+
     if (connectionDesc->isInternal()){
         {
             QSqlDatabase db = QSqlDatabase::database(connectionName);
@@ -1347,12 +1347,12 @@ void DataSourceManager::invalidateLinkedDatasources(QString datasourceName)
 {
     foreach(QString name, dataSourceNames()){
         if (isSubQuery(name)){
-           if (subQueryByName(name)->master() == datasourceName)
+           if (subQueryByName(name)->master().compare(datasourceName) == 0)
                dataSourceHolder(name)->invalidate(designTime()?IDataSource::DESIGN_MODE:IDataSource::RENDER_MODE);
         }
         if (isProxy(name)){
             ProxyDesc* proxy = proxyByName(name);
-            if ((proxy->master() == datasourceName) || (proxy->child() == datasourceName))
+            if ((proxy->master().compare(datasourceName) == 0) || (proxy->child().compare(datasourceName) == 0))
                 dataSourceHolder(name)->invalidate(designTime()?IDataSource::DESIGN_MODE:IDataSource::RENDER_MODE);
 
         }
@@ -1437,13 +1437,13 @@ void DataSourceManager::clear(ClearMethod method)
         case All:
             invalidateLinkedDatasources(dit.key());
             delete dit.value();
-            m_datasources.erase(dit++);
+            dit = m_datasources.erase(dit);
             break;
         default:
             if (owned){
                 invalidateLinkedDatasources(dit.key());
                 delete dit.value();
-                m_datasources.erase(dit++);
+                dit = m_datasources.erase(dit);
             } else {
                 ++dit;
             }

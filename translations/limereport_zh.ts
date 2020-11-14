@@ -548,10 +548,6 @@ p, li { white-space: pre-wrap; }
         <translation>自动连接</translation>
     </message>
     <message>
-        <source>Dont keep credentals in lrxml</source>
-        <translation>不在lrxml文件中保存凭证</translation>
-    </message>
-    <message>
         <source>Check connection</source>
         <translation>检查连接</translation>
     </message>
@@ -586,6 +582,10 @@ p, li { white-space: pre-wrap; }
     <message>
         <source>defaultConnection</source>
         <translation>默认连接</translation>
+    </message>
+    <message>
+        <source>Don&apos;t keep credentials in lrxml</source>
+        <translation>不在lrxml文件中保存凭证</translation>
     </message>
 </context>
 <context>
@@ -1195,6 +1195,10 @@ p, li { white-space: pre-wrap; }
 =======
         <translation>编辑</translation>
 >>>>>>> upstream/master
+    </message>
+    <message>
+        <source>Images (*.gif *.icns *.ico *.jpeg *.tga *.tiff *.wbmp *.webp *.png *.jpg *.bmp);;All(*.*)</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -2065,6 +2069,14 @@ p, li { white-space: pre-wrap; }
         <source>shiftItems</source>
         <translation>偏移组件</translation>
     </message>
+    <message>
+        <source>showLegend</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>removeGap</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>LimeReport::RectPropItem</name>
@@ -2594,6 +2606,25 @@ This preview is no longer valid.</source>
     </message>
 </context>
 <context>
+    <name>LimeReport::SVGItem</name>
+    <message>
+        <source>SVG Image</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>SVG (*.svg)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation type="unfinished">编辑</translation>
+    </message>
+    <message>
+        <source>Watermark</source>
+        <translation type="unfinished">水印</translation>
+    </message>
+</context>
+<context>
     <name>LimeReport::ScriptBrowser</name>
     <message>
         <source>Form</source>
@@ -2840,6 +2871,13 @@ This preview is no longer valid.</source>
     <message>
         <source>SubDetailHeader</source>
         <translation>子细节头</translation>
+    </message>
+</context>
+<context>
+    <name>LimeReport::SvgEditor</name>
+    <message>
+        <source>Select image file</source>
+        <translation type="unfinished">选择图像文件</translation>
     </message>
 </context>
 <context>
@@ -3269,6 +3307,22 @@ This preview is no longer valid.</source>
     <message>
         <source>&apos;&apos;</source>
         <translation>&apos;&apos;</translation>
+    </message>
+    <message>
+        <source>SVG Item</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>image</source>
+        <translation type="unfinished">图像</translation>
+    </message>
+    <message>
+        <source>series</source>
+        <translation type="unfinished">数据系列</translation>
+    </message>
+    <message>
+        <source>Series</source>
+        <translation type="unfinished">数据系列</translation>
     </message>
 </context>
 </TS>

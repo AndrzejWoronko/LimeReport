@@ -131,7 +131,8 @@ BaseDesignIntf *PageItemDesignIntf::createSameTypeItem(QObject *owner, QGraphics
 void PageItemDesignIntf::geometryChangedEvent(QRectF newRect, QRectF)
 {
     Q_UNUSED(newRect)
-    updateMarginRect();
+    if (itemMode() == DesignMode || !endlessHeight())
+        updateMarginRect();
     PageSize oldSize = m_pageSize;
     if (!m_sizeChainging && !isLoading())
         m_pageSize = Custom;
@@ -243,8 +244,7 @@ int PageItemDesignIntf::calcBandIndex(BandDesignIntf::BandsType bandType, BandDe
     } else {
         int maxChildIndex = 0;
         foreach(BandDesignIntf* band, m_bands){
-            if (band->bandType() == BandDesignIntf::Data)
-                maxChildIndex = std::max(maxChildIndex, band->maxChildIndex());
+            maxChildIndex = std::max(maxChildIndex, band->maxChildIndex());
         }
         bandIndex = std::max(bandIndex, maxChildIndex + 1);
     }
@@ -490,8 +490,10 @@ void PageItemDesignIntf::setResetPageNumber(bool resetPageNumber)
 
 void PageItemDesignIntf::updateSubItemsSize(RenderPass pass, DataSourceManager *dataManager)
 {
-    snapshotItemsLayout();
-    arrangeSubItems(pass, dataManager);
+    if (!endlessHeight()){
+        snapshotItemsLayout(IgnoreBands);
+        arrangeSubItems(pass, dataManager);
+    }
 }
 
 bool PageItemDesignIntf::oldPrintMode() const
